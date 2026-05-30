@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: cakeshop
+      POSTGRES_USER: cakeshop
+      POSTGRES_PASSWORD: cakeshop
+    ports:
+      - "5432:5432"
+    volumes:
+      - cakeshop_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cakeshop -d cakeshop"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build: .
+    ports:
+      - "8081:8081"
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/cakeshop
+      DB_USERNAME: cakeshop
+      DB_PASSWORD: cakeshop
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      YANDEX_MAPS_API_KEY: ${YANDEX_MAPS_API_KEY:-c19a276a-9be7-418a-beaf-9a1a829c2bb4}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  cakeshop_pg:
