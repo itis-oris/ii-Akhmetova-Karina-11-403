@@ -1,7 +1,6 @@
 target/
 .git/
 .idea/
-.cursor/
 *.iml
 .DS_Store
 application-local.properties

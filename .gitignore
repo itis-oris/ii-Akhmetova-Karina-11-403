@@ -2,7 +2,6 @@ HELP.md
 *.md
 http/
 
-.cursor/
 .idea/
 .tmp_pdf_imgs/
 .DS_Store
